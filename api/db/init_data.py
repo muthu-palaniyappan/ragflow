@@ -41,10 +41,10 @@ def encode_to_base64(input_string):
 def init_superuser():
     user_info = {
         "id": uuid.uuid1().hex,
-        "password": encode_to_base64("admin"),
+        "password": encode_to_base64(os.environ.get("RAGFLOW_ADMIN_PASSWORD", "admin")),
         "nickname": "admin",
         "is_superuser": True,
-        "email": "admin@ragflow.io",
+        "email": os.environ.get("RAGFLOW_ADMIN_EMAIL", "admin@ragflow.io"),
         "creator": "system",
         "status": "1",
     }
@@ -169,8 +169,8 @@ def init_web_data():
     start_time = time.time()
 
     init_llm_factory()
-    # if not UserService.get_all().count():
-    #    init_superuser()
+    if not UserService.get_all().count():
+       init_superuser()
 
     add_graph_templates()
     logging.info("init web data success:{}".format(time.time() - start_time))

@@ -138,6 +138,14 @@ client_urls_prefix = [
     register_page(path) for dir in pages_dir for path in search_pages_path(dir)
 ]
 
+@login_manager.request_loader
+def load_user_from_request(request):
+    auth = request.authorization
+    if auth:
+        user = UserService.query_user(auth.username, auth.password)
+        if user:
+            return user
+    return None
 
 @login_manager.request_loader
 def load_user(web_request):
